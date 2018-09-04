@@ -3,6 +3,7 @@ package com.navercorp.bookserver;
 import org.springframework.stereotype.Service;
 
 import java.util.Collection;
+import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -14,7 +15,9 @@ public class BookService {
     private AtomicInteger maxId = new AtomicInteger(0);
 
     public Book findById(Integer id) {
-        return repo.get(id);
+        Book book = repo.get(id);
+        Objects.requireNonNull(book, "cannot find book with id: " + id);
+        return book;
     }
 
     public boolean update(Book book) {

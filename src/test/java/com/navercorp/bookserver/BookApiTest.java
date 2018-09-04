@@ -11,9 +11,7 @@ import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.web.context.WebApplicationContext;
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -69,5 +67,25 @@ public class BookApiTest {
                         .contentType(MediaType.APPLICATION_JSON)
         )
                 .andExpect(status().isNoContent());
+    }
+
+    @Test
+    public void statusShouldBe404WhenBookIsNotExisted() throws Exception {
+        mvc.perform(
+                get("/api/books/999")
+                        .contentType(MediaType.APPLICATION_JSON)
+        )
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.title").exists())
+                .andExpect(jsonPath("$.detail").exists());
+    }
+
+    @Test
+    public void statusShouldBe405WhenCallingNotExisingDeleteVerb() throws Exception {
+        mvc.perform(
+                delete("/api/books")
+                        .contentType(MediaType.APPLICATION_JSON)
+        )
+                .andExpect(status().isMethodNotAllowed());
     }
 }
